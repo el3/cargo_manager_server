@@ -14,8 +14,7 @@ def raise_expected_json(request, error):
     raise BadRequest('expected_json')
 
 
-Request.on_json_loading_failed = raise_expected_json
-
+setattr(Request, 'on_json_loading_failed', raise_expected_json)
 
 @api.errorhandler(BadRequest)
 @api.errorhandler(NotFound)
@@ -45,4 +44,4 @@ def verify_password(username, password):
         return 'admin'
 
 
-from . import admin, messages  # noqa: F401, E402
+from . import admin, pallets  # noqa: F401, E402

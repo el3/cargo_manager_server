@@ -11,5 +11,4 @@ db = SQLAlchemy(metadata=MetaData(naming_convention={
 }))
 migrate = Migrate()
 
-from .message import Message  # noqa: F401, E402
 from .pallet import Pallet  # noqa: F401, E402

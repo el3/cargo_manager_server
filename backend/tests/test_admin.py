@@ -2,7 +2,6 @@ import pytest
 from flask import session
 
 from backend import create_app, ConfigurationError
-from backend.model import Message
 
 
 @pytest.fixture
@@ -14,14 +13,6 @@ def admin_password(app):
 def admin_session(client):
     with client.session_transaction() as session:
         session['admin'] = True
-
-
-@pytest.fixture
-def message(db):
-    message = Message(text='Test message')
-    db.session.add(message)
-    db.session.flush()
-    return message
 
 
 def test_config_missing_password():
@@ -61,17 +52,3 @@ def test_cookie(client, admin_session):
     response = client.get('/auth')
     assert response.status_code == 200
     assert response.data == b''
-
-
-def test_message_delete_invalid_id(client, admin_session):
-    response = client.delete('/messages/0')
-    assert response.status_code == 404
-    assert response.get_json()['message'] == 'invalid_message_id'
-
-
-def test_message_delete_valid(client, admin_session, message, db):
-    assert db.session.get(Message, message.id) is message
-    response = client.delete(f'/messages/{message.id}')
-    assert response.status_code == 204
-    assert response.data == b''
-    assert db.session.get(Message, message.id) is None
