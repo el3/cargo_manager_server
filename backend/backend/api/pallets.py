@@ -16,7 +16,7 @@ def pallets_add():
     # Validate the required fields
     required_fields = ['datetime', 'trip', 'label', 'hold', 'space', 'layer']
     for field in required_fields:
-        if not json.get(field):
+        if field not in json:
             abort(400, f'expected_{field}')
 
     new_pallet = Pallet(
