@@ -34,12 +34,12 @@ def pallets_add():
     return '', 201
 
 @api.delete('/pallets/<int:id>')
-@auth.login_required
+#@auth.login_required
 def pallets_delete(id):
     pallet = db.session.get(Pallet, id)
 
     if not pallet:
-        abort(404, 'invalid_pallet_id')
+        abort(404, 'invalid_pallet_data')
 
     db.session.delete(pallet)
     db.session.commit()

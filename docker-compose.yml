@@ -19,7 +19,7 @@ services:
             WSGI_MODULE: backend:create_app()
             # 101: nginx gid
             WSGI_SOCKET_GID: 101
-            TZ: Europe/Paris
+            TZ: UTC
 
     db:
         image: postgres:16-alpine
@@ -28,7 +28,7 @@ services:
             - ./db_data:/var/lib/postgresql/data
         environment:
             POSTGRES_PASSWORD: $DB_PASSWORD
-            TZ: Europe/Paris
+            TZ: UTC
 
     frontend:
         image: fluxt/frontend:${TAG}
@@ -39,7 +39,7 @@ services:
             BASE_URI:
             # 101: nginx gid
             SOCKET_GID: 101
-            TZ: Europe/Paris
+            TZ: UTC
 
     proxy:
         image: nginx
@@ -60,6 +60,6 @@ services:
             - ./frontend_run:/frontend_run
         environment:
             BASE_URI:
-            TZ: Europe/Paris
+            TZ: UTC
 
 # vim: se sw=4 sts=4 et:
