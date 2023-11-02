@@ -6,3 +6,4 @@ backend_run/
 frontend_run/
 proxy_run/
 db_data/
+env/
