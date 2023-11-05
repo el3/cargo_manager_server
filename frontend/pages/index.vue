@@ -1,5 +1,8 @@
 <script setup lang="ts">
-  const { data, error, execute, pending, status } = await useLazyFetch('http://0.0.0.0:8080/api/pallets?trip=1')
+  const { data, error, execute, pending, status } = await useLazyFetch(
+    '/api/pallets',
+    { query: { trip: 1 }, immediate: true },
+  );
 </script>
 
 <template>
@@ -12,7 +15,8 @@
   </div>
 
   <div v-else>
-    {{ data }}
-     <!-- <UTable :rows="data.pallets" /> -->
+     Status: {{ status }}<br>
+     Data:<br>
+    <UTable :rows="data.pallets" />
   </div>
 </template>
