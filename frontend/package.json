@@ -19,5 +19,8 @@
     "overrides": {
       "nuxi": "Cheaterman/nuxi#ipc-listhen"
     }
+  },
+  "dependencies": {
+    "@nuxt/ui": "^2.10.0"
   }
 }

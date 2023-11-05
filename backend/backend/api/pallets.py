@@ -4,9 +4,10 @@ from backend.model import Pallet, db
 
 @api.get('/pallets')
 def pallets_list():
+    trip = request.args.get('trip', default=None, type=int)
     return {'pallets': [
         pallet.to_dict()
-        for pallet in Pallet.query.order_by(Pallet.id)
+        for pallet in Pallet.query.filter(Pallet.trip == trip).order_by(Pallet.id)
     ]}
 
 @api.post('/pallets')
