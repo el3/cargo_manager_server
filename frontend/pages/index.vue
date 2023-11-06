@@ -15,8 +15,6 @@
   </div>
 
   <div v-else>
-     Status: {{ status }}<br>
-     Data:<br>
     <UTable :rows="data.pallets" />
   </div>
 </template>
