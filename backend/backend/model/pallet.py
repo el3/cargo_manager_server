@@ -4,6 +4,7 @@ from backend.model import db
 class Pallet(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     datetime = Column(DateTime, nullable=False)
+    year = Column(Integer, nullable=False)
     trip = Column(Integer, nullable=False)
     label = Column(Integer, nullable=False)
     hold = Column(Integer, nullable=False)
@@ -14,11 +15,10 @@ class Pallet(db.Model):
         return {
             'id': self.id,
             'datetime': self.datetime,
+	    'year': self.year,
             'trip': self.trip,
             'label': self.label,
             'hold': self.hold,
             'space': self.space,
             'layer': self.layer
         }
-
-#
