@@ -14,11 +14,11 @@ class Pallet(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'datetime': self.datetime,
+            'datetime': self.datetime.isoformat(),
 	    'year': self.year,
             'trip': self.trip,
-            'label': self.label,
             'hold': self.hold,
             'space': self.space,
-            'layer': self.layer
+            'layer': self.layer,
+            'label': self.label
         }

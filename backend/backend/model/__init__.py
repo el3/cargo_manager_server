@@ -12,3 +12,4 @@ db = SQLAlchemy(metadata=MetaData(naming_convention={
 migrate = Migrate()
 
 from .pallet import Pallet  # noqa: F401, E402
+from .trip import Trip  # noqa: F401, E402

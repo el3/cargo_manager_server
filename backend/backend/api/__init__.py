@@ -44,4 +44,4 @@ def verify_password(username, password):
         return 'admin'
 
 
-from . import admin, pallets  # noqa: F401, E402
+from . import admin, pallets, trips  # noqa: F401, E402

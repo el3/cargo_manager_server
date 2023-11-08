@@ -2,21 +2,17 @@ from flask import abort, request
 from . import api, auth
 from backend.model import Pallet, db
 
-@api.get('/pallets')
-def pallets_list():
-    # Year is required
-    year = request.args.get('year', type=int)
-    if year is None:
-        return {"error": "Year is required."}, 400
 
+@api.get('/pallets/<int:year>/<int:trip>')
+def pallets_list(year, trip):
     # Trip is optional
-    trip = request.args.get('trip', default=None, type=int)
     query = Pallet.query.filter(Pallet.year == year)
 
     if trip is not None:
         query = query.filter(Pallet.trip == trip)
     pallets = query.order_by(Pallet.id).all()
     return {'pallets': [pallet.to_dict() for pallet in pallets]}
+
 
 @api.post('/pallets')
 def pallets_add():
@@ -41,7 +37,7 @@ def pallets_add():
     db.session.add(new_pallet)
     db.session.commit()
 
-    return '', 201
+    return {"id":new_pallet.id}, 201
 
 @api.delete('/pallets/<int:id>')
 #@auth.login_required
