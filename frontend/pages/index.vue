@@ -45,15 +45,7 @@ const columns = [{
 </script>
 
 <template>
-  <div v-if="status === 'idle'">
-    <button @click="execute">Get data.</button>
-  </div>
-
-  <div v-else-if="pending">
-    Loading comments...
-  </div>
-
-  <div v-else>
+  <div>
 
 
 
