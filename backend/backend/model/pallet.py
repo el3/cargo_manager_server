@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from backend.model import db
+from sqlalchemy import UniqueConstraint
+
 
 class Pallet(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -10,6 +12,8 @@ class Pallet(db.Model):
     hold = Column(Integer, nullable=False)
     space = Column(Integer, nullable=False)
     layer = Column(Integer, nullable=False)
+
+    __table_args__ = (UniqueConstraint('year', 'trip', 'hold', 'space', 'layer'),)
 
     def to_dict(self):
         return {

@@ -1,6 +1,6 @@
 from flask import abort, request
 from . import api, auth
-from backend.model import Pallet, Trip, db
+from backend.model import Trip, db
 
 @api.get('/trips/<int:year>/')
 @api.get('/trips/<int:year>/<int:trip>')
