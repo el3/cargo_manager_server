@@ -18,7 +18,7 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 
 \
 
-\
+
 
 ## Preparation of production server (using lighttpd as example)
 
