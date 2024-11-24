@@ -44,24 +44,64 @@ Preparation of production server (using lighttpd as example).
 
 
 
-Push from the development environment to production server.
+## Push from the development environment to production server.
+
 ------------
 
 ### Dev environment
-1: Go to your project folder on the dev environment: In this example `cd cargo_manager_server`
-2: Push to the bare repository: `git push production_server_user@production_server_ip:cargo_manager_server cargo_manager` `cargo_manager` being the branch in this case.
+
+1. Go to your project folder on the dev environment. In this example:
+   ```bash
+   cd cargo_manager_server
+   ```
+
+2. Push to the bare repository:
+   ```bash
+   git push production_server_user@production_server_ip:cargo_manager_server cargo_manager
+   ```
+   - `cargo_manager` being the branch in this case.
 
 ### Production server
-1: On the production server, we do a reset and clone operation: `sudo rm -rf /tmp/temprepo && git clone ~/cargo_manager_server -b cargo_manager /tmp/temprepo`
-2: Go to the temprepo folder: `cd /tmp/temprepo/`
-3: Copy a couple of files to the webapp folder:
-  ```plaintext
-  sudo cp docker-compose.yml /var/www/cargo_manager_server/
-  sudo cp nginx.conf.template /var/www/cargo_manager_server/
-  sudo cp .env /var/www/cargo_manager_server/
-  ```
-4: Build the images: `docker compose build`
-5: Go to the webapp folder: `cd /var/www/cargo_manager_server/`
-6: Change the permission an ownership of the folder: `sudo chown -R production_server_user: . && chmod 400 .env`
-7: Start the service: `docker compose up --renew-anon-volumes --no-deps --detach`
-8: Upgrade the db in a temporary container: `echo 'flask db upgrade' | docker compose run --rm backend sh`
+
+1. On the production server, perform a reset and clone operation:
+   ```bash
+   sudo rm -rf /tmp/temprepo && git clone ~/cargo_manager_server -b cargo_manager /tmp/temprepo
+   ```
+
+2. Go to the temprepo folder:
+   ```bash
+   cd /tmp/temprepo/
+   ```
+
+3. Copy a couple of files to the webapp folder:
+   ```bash
+   sudo cp docker-compose.yml /var/www/cargo_manager_server/
+   sudo cp nginx.conf.template /var/www/cargo_manager_server/
+   sudo cp .env /var/www/cargo_manager_server/
+   ```
+
+4. Build the images:
+   ```bash
+   docker compose build
+   ```
+
+5. Go to the webapp folder:
+   ```bash
+   cd /var/www/cargo_manager_server/
+   ```
+
+6. Change the permissions and ownership of the folder:
+   ```bash
+   sudo chown -R production_server_user: . && chmod 400 .env
+   ```
+
+7. Start the service:
+   ```bash
+   docker compose up --renew-anon-volumes --no-deps --detach
+   ```
+
+8. Upgrade the database in a temporary container:
+   ```bash
+   echo 'flask db upgrade' | docker compose run --rm backend sh
+   ```
+
