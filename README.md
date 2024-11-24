@@ -4,7 +4,7 @@ Nuxt/Flask/NGINX boilerplate
 Useful to quickly get started on building Flask apps with modern frontend practices.
 <br/>
 ## Installation of development environment.
-------------
+
 
 1. Clone this repository: `git clone https://github.com/el3/cargo_manager_server && cd fluxt`
 1. Install uwsgi: `pip install --user uwsgi`
@@ -18,7 +18,7 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 <br/>
 
 ## Preparation of production server (using lighttpd as example)
-------------
+
 
 1. Install lighttpd, git, docker, and enable sshd.
 
@@ -71,7 +71,7 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 <br/>
 
 ## Push from the development environment to production server.
-------------
+
 
 ### Dev environment
 
