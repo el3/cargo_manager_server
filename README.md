@@ -87,7 +87,9 @@ Useful to quickly get started on building Flask apps with modern frontend practi
    git push production_server_user@production_server_ip:cargo_manager_server cargo_manager
    ```
    - `cargo_manager` being the branch in this case.
+   - 
 <br/>
+
 ### Production server
 
 1. On the production server, perform a reset and clone operation:
