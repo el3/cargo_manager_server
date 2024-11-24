@@ -4,6 +4,7 @@ Nuxt/Flask/NGINX boilerplate
 Useful to quickly get started on building Flask apps with modern frontend practices.
 
 Installation of development environment.
+
 ------------
 
 1. Clone this repository: `git clone https://github.com/el3/cargo_manager_server && cd fluxt`
@@ -14,7 +15,6 @@ Installation of development environment.
 1. Run database migrations: `flask db upgrade`
 1. Run the development server: `cd .. && ./start_devserver.sh`
 1. In a few seconds, the example chat app should be available at http://localhost:8080/ (if you're getting 502 Bad Gateway, be patient and try again :-) )
-
 ------------
 
 
@@ -67,7 +67,7 @@ Installation of development environment.
    ```bash
    git init --bare --initial-branch=cargo_manager cargo_manager_server
    ```
-
+------------
 
 
 
