@@ -17,6 +17,7 @@ Installation of development environment.
 
 
 
+
 Preparation of production server (using lighttpd as example).
 ------------
 
@@ -39,6 +40,7 @@ Preparation of production server (using lighttpd as example).
 1. Create a symlink to the file in the conf-enabled directory: `sudo ln -s /etc/lighttpd/conf-available/25-cargo_manager_server.conf /etc/lighttpd/conf-enabled/`
 1: Start lighttpd: `sudo rc-update add lighttpd default && sudo rc-service lighttpd start`
 1: Create a bare git repository: `git init --bare --initial-branch=cargo_manager cargo_manager_server`
+
 
 
 
