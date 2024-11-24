@@ -4,7 +4,6 @@ Nuxt/Flask/NGINX boilerplate
 Useful to quickly get started on building Flask apps with modern frontend practices.
 <br/>
 ## Installation of development environment.
-
 ------------
 
 1. Clone this repository: `git clone https://github.com/el3/cargo_manager_server && cd fluxt`
@@ -19,7 +18,6 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 <br/>
 
 ## Preparation of production server (using lighttpd as example)
-
 ------------
 
 1. Install lighttpd, git, docker, and enable sshd.
@@ -73,11 +71,9 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 <br/>
 
 ## Push from the development environment to production server.
-
 ------------
 
 ### Dev environment
-------------
 
 1. Go to your project folder on the dev environment. In this example:
    ```bash
@@ -89,9 +85,9 @@ Useful to quickly get started on building Flask apps with modern frontend practi
    git push production_server_user@production_server_ip:cargo_manager_server cargo_manager
    ```
    - `cargo_manager` being the branch in this case.
-
+<br/>
 ### Production server
-------------
+
 1. On the production server, perform a reset and clone operation:
    ```bash
    sudo rm -rf /tmp/temprepo && git clone ~/cargo_manager_server -b cargo_manager /tmp/temprepo
