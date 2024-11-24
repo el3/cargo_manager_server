@@ -16,7 +16,7 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 1. Run the development server: `cd .. && ./start_devserver.sh`
 1. In a few seconds, the example chat app should be available at http://localhost:8080/ (if you're getting 502 Bad Gateway, be patient and try again :-) )
 
-__
+_
 
 
 
