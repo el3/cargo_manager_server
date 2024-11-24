@@ -2,7 +2,7 @@ Nuxt/Flask/NGINX boilerplate
 ============================
 
 Useful to quickly get started on building Flask apps with modern frontend practices.
-
+<br/>
 ## Installation of development environment.
 
 ------------
@@ -67,7 +67,6 @@ Useful to quickly get started on building Flask apps with modern frontend practi
    ```bash
    git init --bare --initial-branch=cargo_manager cargo_manager_server
    ```
-------------
 
 
 
@@ -78,6 +77,7 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 ------------
 
 ### Dev environment
+------------
 
 1. Go to your project folder on the dev environment. In this example:
    ```bash
@@ -91,7 +91,7 @@ Useful to quickly get started on building Flask apps with modern frontend practi
    - `cargo_manager` being the branch in this case.
 
 ### Production server
-
+------------
 1. On the production server, perform a reset and clone operation:
    ```bash
    sudo rm -rf /tmp/temprepo && git clone ~/cargo_manager_server -b cargo_manager /tmp/temprepo
