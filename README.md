@@ -2,7 +2,9 @@ Nuxt/Flask/NGINX boilerplate
 ============================
 
 Useful to quickly get started on building Flask apps with modern frontend practices.
+------------
 <br/>
+
 ## Installation of development environment.
 
 
