@@ -131,6 +131,6 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 
 8. Upgrade the database in a temporary container:
    ```bash
-   echo 'flask db upgrade' | docker compose run --rm backend sh
+   echo 'flask db upgrade' | docker compose run -T --rm backend sh
    ```
 
