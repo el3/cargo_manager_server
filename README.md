@@ -18,28 +18,57 @@ Installation of development environment.
 
 
 
-Preparation of production server (using lighttpd as example).
+## Preparation of production server (using lighttpd as example)
+
 ------------
 
-1. Install lighttpd, git, docker and enable sshd.
-1. Make a couple of folders: `sudo mkdir /etc/lighttpd/conf-available && sudo mkdir /etc/lighttpd/conf-enabled && sudo mkdir /var/www/cargo_manager_server`
-1. Edit lighttpd config: `sudo nano /etc/lighttpd/lighttpd.conf` and add this line:
-    ```plaintext
-    include "conf-enabled/*.conf"
-    ```
-1. Make a new module: `sudo nano /etc/lighttpd/conf-available/25-cargo_manager_server.conf` and add:
-    ```plaintext
-    server.modules += ( "mod_proxy" )
+1. Install lighttpd, git, docker, and enable sshd.
 
-    $HTTP["url"] !~ "^/.well-known/" {
-        proxy.server += ("" => ((
-            "socket" => "/var/www/cargo_manager_server/proxy_run/nginx.sock"
-        )))
-    }
-    ```
-1. Create a symlink to the file in the conf-enabled directory: `sudo ln -s /etc/lighttpd/conf-available/25-cargo_manager_server.conf /etc/lighttpd/conf-enabled/`
-1: Start lighttpd: `sudo rc-update add lighttpd default && sudo rc-service lighttpd start`
-1: Create a bare git repository: `git init --bare --initial-branch=cargo_manager cargo_manager_server`
+2. Make a couple of folders:
+   ```bash
+   sudo mkdir /etc/lighttpd/conf-available && sudo mkdir /etc/lighttpd/conf-enabled && sudo mkdir /var/www/cargo_manager_server
+   ```
+
+3. Edit lighttpd config:
+   ```bash
+   sudo nano /etc/lighttpd/lighttpd.conf
+   ```
+   Add this line:
+   ```plaintext
+   include "conf-enabled/*.conf"
+   ```
+
+4. Make a new module:
+   ```bash
+   sudo nano /etc/lighttpd/conf-available/25-cargo_manager_server.conf
+   ```
+   Add the following configuration:
+   ```plaintext
+   server.modules += ( "mod_proxy" )
+
+   $HTTP["url"] !~ "^/.well-known/" {
+       proxy.server += ("" => ((
+           "socket" => "/var/www/cargo_manager_server/proxy_run/nginx.sock"
+       )))
+   }
+   ```
+
+5. Create a symlink to the file in the conf-enabled directory:
+   ```bash
+   sudo ln -s /etc/lighttpd/conf-available/25-cargo_manager_server.conf /etc/lighttpd/conf-enabled/
+   ```
+
+6. Start lighttpd:
+   ```bash
+   sudo rc-update add lighttpd default && sudo rc-service lighttpd start
+   ```
+
+7. Create a bare git repository:
+   ```bash
+   git init --bare --initial-branch=cargo_manager cargo_manager_server
+   ```
+
+
 
 
 
