@@ -29,7 +29,12 @@ Useful to quickly get started on building Flask apps with modern frontend practi
    sudo mkdir /etc/lighttpd/conf-available && sudo mkdir /etc/lighttpd/conf-enabled && sudo mkdir /var/www/cargo_manager_server
    ```
 
-3. Edit lighttpd config:
+3. Change the permissions and ownership of the folder:
+   ```bash
+   sudo chown -R production_server_user: .
+   ```
+
+4. Edit lighttpd config:
    ```bash
    sudo nano /etc/lighttpd/lighttpd.conf
    ```
@@ -38,7 +43,7 @@ Useful to quickly get started on building Flask apps with modern frontend practi
    include "conf-enabled/*.conf"
    ```
 
-4. Make a new module:
+5. Make a new module:
    ```bash
    sudo nano /etc/lighttpd/conf-available/25-cargo_manager_server.conf
    ```
@@ -53,17 +58,17 @@ Useful to quickly get started on building Flask apps with modern frontend practi
    }
    ```
 
-5. Create a symlink to the file in the conf-enabled directory:
+6. Create a symlink to the file in the conf-enabled directory:
    ```bash
    sudo ln -s /etc/lighttpd/conf-available/25-cargo_manager_server.conf /etc/lighttpd/conf-enabled/
    ```
 
-6. Start lighttpd:
+7. Start lighttpd:
    ```bash
    sudo rc-update add lighttpd default && sudo rc-service lighttpd start
    ```
 
-7. Create a bare git repository:
+8. Create a bare git repository:
    ```bash
    git init --bare --initial-branch=cargo_manager cargo_manager_server
    ```
@@ -94,7 +99,7 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 
 1. On the production server, perform a reset and clone operation:
    ```bash
-   sudo rm -rf /tmp/temprepo && git clone ~/cargo_manager_server -b cargo_manager /tmp/temprepo
+   rm -rf /tmp/temprepo && git clone ~/cargo_manager_server -b cargo_manager /tmp/temprepo
    ```
 
 2. Go to the temprepo folder:
@@ -104,9 +109,9 @@ Useful to quickly get started on building Flask apps with modern frontend practi
 
 3. Copy a couple of files to the webapp folder:
    ```bash
-   sudo cp docker-compose.yml /var/www/cargo_manager_server/
-   sudo cp nginx.conf.template /var/www/cargo_manager_server/
-   sudo cp .env /var/www/cargo_manager_server/
+   cp docker-compose.yml /var/www/cargo_manager_server/
+   cp nginx.conf.template /var/www/cargo_manager_server/
+   cp .env /var/www/cargo_manager_server/
    ```
 
 4. Build the images:
@@ -119,9 +124,9 @@ Useful to quickly get started on building Flask apps with modern frontend practi
    cd /var/www/cargo_manager_server/
    ```
 
-6. Change the permissions and ownership of the folder:
-   ```bash
-   sudo chown -R production_server_user: . && chmod 400 .env
+6. Change the mod of the .env file:
+   ```
+   chmod 400 .env
    ```
 
 7. Start the service:
