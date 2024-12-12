@@ -1,5 +1,9 @@
 from flask import Flask
 
+import trio
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class ConfigurationError(Exception):
     pass
@@ -23,6 +27,10 @@ def create_app(config=None):
     migrate.init_app(app, db)
 
     from .api import api
+    from .graders import api as graders
+
     app.register_blueprint(api)
+    app.register_blueprint(graders)
+
 
     return app

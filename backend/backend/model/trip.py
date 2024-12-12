@@ -1,4 +1,3 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
 from backend.model import db
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -25,7 +24,7 @@ class Trip(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-	    'year': self.year,
+	        'year': self.year,
             'trip': self.trip,
             'started': self.started.isoformat() if self.started else None,
             'finished': self.finished.isoformat() if self.finished else None,

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
     backend:
         build: backend
@@ -7,6 +5,10 @@ services:
             - ./backend:/code
         environment:
             UWSGI_PY_AUTORELOAD: 1
+
+    graders:
+        volumes:
+            - ./backend:/code
 
     db:
         ports:

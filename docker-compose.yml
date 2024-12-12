@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
     backend:
         image: fluxt/backend:${TAG}
@@ -19,6 +17,24 @@ services:
             WSGI_MODULE: backend:create_app()
             # 101: nginx gid
             WSGI_SOCKET_GID: 101
+            TZ: UTC
+
+    graders:
+        image: fluxt/backend:${TAG}
+        restart: unless-stopped
+        depends_on:
+            - db
+        entrypoint: su uwsgi -c 'cd /code && exec flask graders start-socket-tasks'
+        environment:
+            PYTHONUNBUFFERED: 1
+            SECRET_KEY:
+            ADMIN_PASSWORD:
+            DB_HOST:
+            DB_PASSWORD:
+            GRADER_1_IP:
+            GRADER_2_IP:
+            GRADER_3_IP:
+            FLASK_APP: backend:create_app()
             TZ: UTC
 
     db:

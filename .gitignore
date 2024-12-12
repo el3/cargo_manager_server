@@ -7,3 +7,4 @@ frontend_run/
 proxy_run/
 db_data/
 env/
+venv/

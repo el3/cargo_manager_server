@@ -1,20 +1,16 @@
-from flask import Blueprint, Request, current_app, session
+from .fish import start_fish_grader_tasks
+from flask import Blueprint, current_app, session
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.exceptions import BadRequest, NotFound
+import trio
 
-api = Blueprint('api', __name__)
+api = Blueprint('graders', __name__)
 auth = HTTPBasicAuth(scheme='BasicAPI')
 error_messages = {
     401: 'unauthorized',
     403: 'forbidden',
 }
 
-
-def raise_expected_json(request, error):
-    raise BadRequest('expected_json')
-
-
-setattr(Request, 'on_json_loading_failed', raise_expected_json)
 
 @api.errorhandler(BadRequest)
 @api.errorhandler(NotFound)
@@ -44,4 +40,10 @@ def verify_password(username, password):
         return 'admin'
 
 
-from . import admin, pallets, trips, fish  # noqa: F401, E402
+@api.cli.command()
+def start_socket_tasks() -> None:
+    """CLI command to start the fish grader tasks with Trio."""
+    print('Starting socket tasks...')
+    print(f"Current app name: {current_app.name}")
+
+    trio.run(start_fish_grader_tasks)

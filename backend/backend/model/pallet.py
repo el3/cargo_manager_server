@@ -19,7 +19,7 @@ class Pallet(db.Model):
         return {
             'id': self.id,
             'datetime': self.datetime.isoformat(),
-	    'year': self.year,
+	        'year': self.year,
             'trip': self.trip,
             'hold': self.hold,
             'space': self.space,

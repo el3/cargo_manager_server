@@ -1,5 +1,5 @@
 from flask import abort, request
-from . import api, auth
+from . import api
 from backend.model import Pallet, db
 
 
@@ -11,7 +11,9 @@ def pallets_list(year, trip):
     if trip is not None:
         query = query.filter(Pallet.trip == trip)
     pallets = query.order_by(Pallet.id).all()
-    return {'pallets': [pallet.to_dict() for pallet in pallets]}
+    res = {'pallets': [pallet.to_dict() for pallet in pallets]}
+    print(res)
+    return res
 
 
 @api.post('/pallets')
@@ -26,7 +28,7 @@ def pallets_add():
 
     new_pallet = Pallet(
         datetime=json['datetime'],
-	year=json['year'],
+	    year=json['year'],
         trip=json['trip'],
         label=json['label'],
         hold=json['hold'],
