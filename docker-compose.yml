@@ -31,9 +31,7 @@ services:
             ADMIN_PASSWORD:
             DB_HOST:
             DB_PASSWORD:
-            GRADER_1_IP:
-            GRADER_2_IP:
-            GRADER_3_IP:
+            GRADER_IPS:
             FLASK_APP: backend:create_app()
             TZ: UTC
 

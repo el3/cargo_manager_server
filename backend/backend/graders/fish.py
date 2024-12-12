@@ -1,9 +1,7 @@
-from flask import abort, current_app, g
+from flask import abort, current_app
 from backend.model import Fish, Bin, db
 
 from datetime import datetime, timedelta, UTC
-import time
-import socket
 import trio
 
 import signal
@@ -19,7 +17,7 @@ from itertools import count
 async def connect_to_grader(host, port):
     """Attempt to connect to the fish grader and return the connected socket."""
     for number in count():
-        print(f'Step {number}')
+        print(f'Reconnect {number}')
         try:
             logger.info(f"Attempting connect to {host}")
             s = await trio.open_tcp_stream(host, port)
@@ -27,7 +25,7 @@ async def connect_to_grader(host, port):
             return s
         except Exception as e:
             logger.error(f"Connection error for {host}: {e}. Retrying in 5 seconds...")
-            await trio.sleep(.1)
+            await trio.sleep(5)
 
 
 async def fish_grader_task(host) -> None:
@@ -74,22 +72,21 @@ async def communicate(s, host):
 
 async def start_fish_grader_tasks() -> None:
     """Function to start the background tasks for fish graders."""
+
+    def terminate(*_: Any) -> None:
+        nursery.cancel_scope.cancel()
+
+    signal.signal(signal.SIGTERM, terminate)
+
     logger.info(f"Current app in start tasks function: {current_app.name}")
 
     async with trio.open_nursery() as nursery:
         logger.info("Starting fish grader tasks...")
-        for i in range(3):
-            ip = current_app.config.get(f'GRADER_{i+1}_IP')
-            if ip:
-                logger.info(f"Connecting to {ip}")
-                nursery.start_soon(fish_grader_task, ip)
 
-        def terminate(*_: Any) -> None:
-            nursery.cancel_scope.cancel()
+        for ip in current_app.config.get(f'GRADER_IPS').split(","):
+            logger.info(f"Connecting to {ip}")
+            nursery.start_soon(fish_grader_task, ip.strip())
 
-        signal.signal(signal.SIGTERM, terminate)
-
-        await trio.sleep_forever()
 
 def fish_add(data) -> None:
     dg = '[12.38] DualGrader Bin'
