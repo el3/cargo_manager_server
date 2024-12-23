@@ -1,18 +1,21 @@
 from flask import abort, current_app
-from backend.model import Fish, Bin, db
-
+from backend.model import Fish, Bin, Box, db
 from datetime import datetime, timedelta, UTC
-import trio
-
-import signal
+from paho.mqtt.client import  Client, MQTTv311
+from trio_paho_mqtt import AsyncClient
 from typing import Any
-
+from itertools import count
 import logging
+import signal
+import trio
+import json
+import uuid
+
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 
-from itertools import count
 
 async def connect_to_grader(host, port):
     """Attempt to connect to the fish grader and return the connected socket."""
@@ -70,24 +73,6 @@ async def communicate(s, host):
 
 
 
-async def start_fish_grader_tasks() -> None:
-    """Function to start the background tasks for fish graders."""
-
-    def terminate(*_: Any) -> None:
-        nursery.cancel_scope.cancel()
-
-    signal.signal(signal.SIGTERM, terminate)
-
-    logger.info(f"Current app in start tasks function: {current_app.name}")
-
-    async with trio.open_nursery() as nursery:
-        logger.info("Starting fish grader tasks...")
-
-        for ip in current_app.config.get(f'GRADER_IPS').split(","):
-            logger.info(f"Connecting to {ip}")
-            nursery.start_soon(fish_grader_task, ip.strip())
-
-
 def fish_add(data) -> None:
     dg = '[12.38] DualGrader Bin'
     ## Mapping dictionary used in FishResource
@@ -135,4 +120,82 @@ def fish_add(data) -> None:
 
     db.session.commit()
 
-    return {"id":new_fish.id}, 201
+
+
+def box_add(data) -> None:
+    # {'Descriptor':{'Weight':15.3, 'Bin':'[12.38] DualGrader Bin 3', 'ProductID':1588}}
+    data = data.get("Descriptor", {})
+    existing_bin = Bin.query.filter_by(bin_name=data.get("Bin")).first()
+    if existing_bin:
+        weight = float(data["Weight"]) / 1000
+        existing_bin.weight -= weight
+        new_box = Box(weight=weight, product=data["ProductID"], bin=data["Bin"])
+
+        time_threshold = datetime.utcnow() - timedelta(hours=24)
+        db.session.query(Box).filter(Box.datetime < time_threshold).delete(synchronize_session=False)
+
+        db.session.add(new_box)
+        db.session.commit()
+    else:
+        new_bin = Bin(weight=float(data["Weight"]) / 1000, bin_name=data["Bin"], count=1)
+        db.session.add(new_bin)
+        db.session.commit()
+
+
+
+def bytes_to_dict(data: bytes) -> dict:
+    try:
+        data_str = data.decode('utf-8')
+        return json.loads(data_str)
+    except (UnicodeDecodeError, json.JSONDecodeError, TypeError):
+        return {}
+
+
+async def read_mqtt(client, nursery):
+    """Read from the broker. Quit after all messages have been received."""
+    while True:
+        async for msg in client.messages():
+            # add box to db.
+            box_add(bytes_to_dict(msg.payload))
+
+
+async def start_fish_grader_tasks() -> None:
+    """Function to start the background tasks for fish graders."""
+
+    def terminate(*_: Any) -> None:
+        nursery.cancel_scope.cancel()
+
+    signal.signal(signal.SIGTERM, terminate)
+
+    logger.info(f"Current app in start tasks function: {current_app.name}")
+
+    async with trio.open_nursery() as nursery:
+        logger.info("Starting fish grader tasks...")
+
+        """Connect to graders."""
+        for ip in current_app.config.get('GRADER_IPS').split(","):
+            logger.info(f"Connecting to {ip}")
+            nursery.start_soon(fish_grader_task, ip.strip())
+
+        """Connect to MQTT packing station"""
+
+        client_id = 'trio-paho-mqtt/' + str(uuid.uuid4())
+        topic = "carsoefactory/psd/up"
+
+        broker = current_app.config.get('MQTT_IP')
+        logger.info(broker)
+        port = 1890
+
+        username = 'RG326'
+        password = 'RG326'
+
+        sync_client = Client(client_id=client_id, protocol=MQTTv311)
+        # Wrap it to create an asyncronous version
+        client = AsyncClient(sync_client, nursery)
+        client.username_pw_set(username, password)
+        # Connect to the broker, and subscribe to the topic
+        client.connect(broker, port, 60)
+        client.subscribe(topic)
+
+        # Start the MQTT reader
+        nursery.start_soon(read_mqtt, client, nursery)

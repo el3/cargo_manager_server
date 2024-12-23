@@ -14,3 +14,4 @@ SECRET_KEY = getenv('SECRET_KEY')
 ADMIN_PASSWORD = getenv('ADMIN_PASSWORD')
 
 GRADER_IPS = getenv('GRADER_IPS')
+MQTT_IP = getenv('MQTT_IP')
