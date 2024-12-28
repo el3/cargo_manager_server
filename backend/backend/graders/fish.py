@@ -83,8 +83,9 @@ def fish_add(data) -> None:
     ## Mapping dictionary used in FishResource
     bins = {"6": {"1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "12", "8": "13", "9": "14",
                     "10": "15"},
-            "17": {"1": "2", "2": "3", "3": "4", "4": "5", "5": "6", "6": "7", "7": "8", "8": "14", "9": "15"}}
+            "101": {"1": "2", "2": "3", "3": "4", "4": "5", "5": "6", "6": "7", "7": "8", "8": "14", "9": "15"}}
 
+    # Delete fish older than 48h
     time_threshold = datetime.now(UTC) - timedelta(hours=48)
     db.session.query(Fish).filter(Fish.datetime < time_threshold).delete(synchronize_session=False)
 
@@ -92,7 +93,8 @@ def fish_add(data) -> None:
     required_fields = ['ip', 'Output', 'Sweight', 'MaterialNumber']
     for field in required_fields:
         if field not in data:
-            abort(400, f'expected_{field}')
+            logger.info(f"Incomplete data {data}")
+            return
 
     new_fish = Fish(
         ip=data['ip'],
@@ -102,9 +104,10 @@ def fish_add(data) -> None:
     )
 
     db.session.add(new_fish)
-
+    logger.info(f"{data}")
     grader = bins.get(data["ip"])
     if grader:
+        logger.info(grader)
         bin_id = grader.get(data["Output"])
         if bin_id:
             existing_bin = Bin.query.filter_by(bin_name=f"{dg} {bin_id}").first()
@@ -114,6 +117,7 @@ def fish_add(data) -> None:
                 existing_bin.bin = data["Output"]
                 existing_bin.grader = data["ip"]
                 existing_bin.count += 1
+                logger.info(f"{data}")
             else:
                 new_bin = Bin(bin_name=f"{dg} {bin_id}", weight=float(data['Sweight']), count=1)
                 db.session.add(new_bin)

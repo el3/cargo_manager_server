@@ -1,14 +1,14 @@
 from . import api
 from backend.model import Fish, Bin, db
+from sqlalchemy import text
+from datetime import datetime
 
 @api.get('/last_fish')
 @api.get('/last_fish/<int:n>')
 def last_fish(n=None):
     if n is None:
         n = 10
-
     fishes = db.session.query(Fish).order_by(Fish.id.desc()).limit(n).all()
-
     return {'fish': [fish.to_dict() for fish in fishes]}
 
 
@@ -23,39 +23,12 @@ def bin_stats(resetbin=None):
     return {'bins': [bin.to_dict() for bin in bins]}
 
 
-def build_histogram_query(bins, end_hours, start_hours):
-    conditions = []
-    print(bins,len(bins))
-    for bin_range in bins:
-        lower, upper = bin_range
-        conditions.append(
-            f'SUM(CASE WHEN weight >= {lower} AND weight < {upper} THEN weight ELSE 0 END) AS "{lower}-{upper}"'
-        )
-
-    conditions_sql = ",\n".join(conditions)
-    if len(conditions_sql):
-        query = f"""
-        SELECT
-            {conditions_sql}
-        FROM fish
-        WHERE datetime >= NOW() - INTERVAL '{int(float(start_hours)*60)} minutes'
-          AND datetime <= NOW() - INTERVAL '{int(float(end_hours)*60)} minutes';
-        """
-        return text(query)
-    return False
-
-@api.get('/fishhistogram')
-def fish_histogram(ranges, start, end):
-
-        start = float(start)
-        end = float(end)
-
-        ranges=json.loads(ranges)
-        query = build_histogram_query(ranges, end, start)
-        if query != False:
-            result = db.session.execute(query).fetchall()
-            #print(result)
-            result_list = [list(row) for row in result]
-            return {'message':result_list} ,200
-        else:
-            return {'message':''}, 200
+@api.get('/fish/<int:last_id>')
+def fish(last_id=0):
+    query = text("SELECT * FROM fish WHERE id > :last_id")
+    results = db.session.execute(query, {"last_id": last_id}).fetchall()
+    result_list = [
+        [row[0], row[1], row[2], row[3], row[4], int(row[5].timestamp())] if isinstance(row[5], datetime) else row[5]
+        for row in results
+    ]
+    return {'fish': result_list}, 200
