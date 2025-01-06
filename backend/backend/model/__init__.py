@@ -16,4 +16,4 @@ from .trip import Trip  # noqa: F401, E402
 from .fish import Fish  # noqa: F401, E402
 from .bin import Bin  # noqa: F401, E402
 from .box import Box  # noqa: F401, E402
-
+from .vfreezer import Storage # noqa: F401, E402

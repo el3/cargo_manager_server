@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, DateTime
 from backend.model import db
 from sqlalchemy import UniqueConstraint
 
