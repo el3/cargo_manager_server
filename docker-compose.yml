@@ -24,9 +24,10 @@ services:
         restart: unless-stopped
         depends_on:
             - db
+        volumes:
+            - ./backend_run:/run
         entrypoint: >
-                sh -c "su uwsgi -c 'pip install --no-cache-dir -U -r /code/requirements.txt' &&
-                su uwsgi -c 'cd /code && exec flask graders start-socket-tasks'"
+                su uwsgi -c 'cd /code && exec flask graders start-socket-tasks'
         environment:
             PYTHONUNBUFFERED: 1
             SECRET_KEY:

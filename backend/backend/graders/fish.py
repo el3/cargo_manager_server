@@ -81,9 +81,9 @@ def fish_add(data) -> None:
             "152": {"1": "2", "2": "3", "3": "4", "4": "5", "5": "6", "6": "7", "7": "8", "8": "14", "9": "15"}}
 
     ## Mapping dictionary used in FishResource
-    bins = {"6": {"1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "12", "8": "13", "9": "14",
-                    "10": "15"},
-            "101": {"1": "2", "2": "3", "3": "4", "4": "5", "5": "6", "6": "7", "7": "8", "8": "14", "9": "15"}}
+    #bins = {"6": {"1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "12", "8": "13", "9": "14",
+     #               "10": "15"},
+      #      "101": {"1": "2", "2": "3", "3": "4", "4": "5", "5": "6", "6": "7", "7": "8", "8": "14", "9": "15"}}
 
     # Delete fish older than 48h
     time_threshold = datetime.now(UTC) - timedelta(hours=48)
@@ -160,6 +160,7 @@ async def read_mqtt(client, nursery):
     while True:
         async for msg in client.messages():
             # add box to db.
+            logger.info(msg.payload)
             box_add(bytes_to_dict(msg.payload))
 
 
@@ -192,14 +193,17 @@ async def start_fish_grader_tasks() -> None:
 
         username = 'RG326'
         password = 'RG326'
-
-        sync_client = Client(client_id=client_id, protocol=MQTTv311)
-        # Wrap it to create an asyncronous version
-        client = AsyncClient(sync_client, nursery)
-        client.username_pw_set(username, password)
-        # Connect to the broker, and subscribe to the topic
-        client.connect(broker, port, 60)
-        client.subscribe(topic)
+        try:
+            sync_client = Client(client_id=client_id, protocol=MQTTv311)
+            # Wrap it to create an asyncronous version
+            client = AsyncClient(sync_client, nursery)
+            client.username_pw_set(username, password)
+            # Connect to the broker, and subscribe to the topic
+            client.connect(broker, port, 60)
+            client.subscribe(topic)
+        except Exception as e:
+            logger.error(f"MQTT Connection error while connecting to broker. {e}")
+            return
 
         # Start the MQTT reader
         nursery.start_soon(read_mqtt, client, nursery)
