@@ -40,11 +40,11 @@ async def fish_grader_task(host) -> None:
 
 
 async def communicate(s, host):
-    """Handle the communication loop with the fish grader."""
+    """Handle the communication loop with the fish grader, with timeout."""
     cmd = str(64).encode("ascii").hex()
     msg = f"0221363609313709{cmd}093138093103"
     msg = bytes.fromhex(msg)
-
+    timeout = 600
     fields = {
         "1": "Weight", "2": "Unit", "3": "Sweight", "7": "WeightQuality",
         "8": "WeighingCount", "4": "Output", "10": "BatchId", "11": "Status",
@@ -54,7 +54,18 @@ async def communicate(s, host):
     try:
         while True:
             await s.send_all(msg)
-            data = await s.receive_some(256)
+            try:
+                # Add timeout for receiving data
+                with trio.fail_after(timeout):
+                    data = await s.receive_some(256)
+            except trio.TooSlowError:
+                logger.warning(f"No data received from {host} in {timeout} seconds. Timing out...")
+                break  # Exit the loop or handle reconnection if needed
+
+            if not data:
+                logger.warning(f"Connection closed by peer: {host}")
+                break  # Exit if connection is closed
+
             data = data.decode("ascii").split("\t")[1:-4]
 
             if len(data) >= 22:
@@ -66,11 +77,13 @@ async def communicate(s, host):
         logger.info(f"Gracefully cleaning up connection with {host}...")
         await s.aclose()
         raise
-    except (trio.BrokenResourceError, trio.ClosedResourceError, trio.TooSlowError) as e:
+    except (trio.BrokenResourceError, trio.ClosedResourceError) as e:
         logger.error(f"Communication error with {host}: {e}. Reconnecting...")
     except Exception as e:
         logger.error(f"Unexpected error during communication with {host}: {e}")
-
+    finally:
+        await s.aclose()
+        logger.info(f"Connection with {host} closed.")
 
 
 def fish_add(data) -> None:
@@ -104,10 +117,10 @@ def fish_add(data) -> None:
     )
 
     db.session.add(new_fish)
-    logger.info(f"{data}")
+    #logger.info(f"{data}")
     grader = bins.get(data["ip"])
     if grader:
-        logger.info(grader)
+        #logger.info(grader)
         bin_id = grader.get(data["Output"])
         if bin_id:
             existing_bin = Bin.query.filter_by(bin_name=f"{dg} {bin_id}").first()
@@ -117,7 +130,7 @@ def fish_add(data) -> None:
                 existing_bin.bin = data["Output"]
                 existing_bin.grader = data["ip"]
                 existing_bin.count += 1
-                logger.info(f"{data}")
+                #logger.info(f"{data}")
             else:
                 new_bin = Bin(bin_name=f"{dg} {bin_id}", weight=float(data['Sweight']), count=1)
                 db.session.add(new_bin)
